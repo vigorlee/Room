@@ -1,0 +1,8 @@
+OS: Ubuntu 22.04.4 LTS x86_64
+GPU: NVIDIA GeForce RTX 4090, 24564 MiB
+NVIDIA driver: 595.84
+Isaac Sim: 6.0.0.1 (Python package installation)
+Python: 3.12
+Renderer: RaytracedLighting, Vulkan
+Validation resolution: 1280 x 720
+Validation date: 2026-07-29

@@ -1,0 +1,9 @@
+.venv/
+assets/
+logs/
+test-results/
+*.zip
+*.zip.part-*
+*.tar.zst
+__pycache__/
+*.pyc
