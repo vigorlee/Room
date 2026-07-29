@@ -64,7 +64,9 @@ export OMNI_KIT_ACCEPT_EULA=YES
 
 Local validation passed: all source ZIP CRC checks, zero USD composition errors
 in both source and combined stages, all five new asset references resolved, and
-two non-black 1280 x 720 RTX renders with working materials and lighting.
+two non-black 1280 x 720 RTX renders with working materials and lighting. All
+five assets retain valid rigid bodies and colliders; Cart018's eight joints and
+Toaster099's four joints have no broken body targets.
 
 ## Release data
 

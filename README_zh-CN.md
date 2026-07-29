@@ -66,7 +66,8 @@ export OMNI_KIT_ACCEPT_EULA=YES
 
 本机验证结果：Room_Mesh 原包 CRC 全部通过；源 Stage 和组合 Stage 的 USD
 composition errors 均为 0；组合 Stage 包含 3615 个源场景 Prim 和 5 件新资产；
-RTX 两张截图均为 1280 x 720、非黑帧，材质和灯光正常。
+RTX 两张截图均为 1280 x 720、非黑帧，材质和灯光正常。五件资产的刚体与
+碰撞体均可解析，Cart018 的 8 个关节和 Toaster099 的 4 个关节没有失效引用。
 
 ## 数据大小与校验
 
