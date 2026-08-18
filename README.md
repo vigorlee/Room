@@ -4,10 +4,6 @@ This repository provides a non-destructive NVIDIA Isaac Sim 6.0.0.1
 composition of `Room_Mesh/Scene.usd` and five Lightwheel Sim-Ready assets:
 `BaggedFood020`, `BottledDrink034`, `Pot079`, `Toaster099`, and `Cart018`.
 
-![Overview](screenshots/room-with-lightwheel-overview.png)
-
-![Asset detail](screenshots/room-with-lightwheel-detail.png)
-
 The four small assets are placed on the kitchen dining table and the cart is
 placed on the floor to its left. The composition layer only deactivates the
 table's original `CoffeeMachine094` to prevent overlap. The source scene is not
