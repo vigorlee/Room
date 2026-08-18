@@ -5,7 +5,7 @@ runtime for two room scenes and five independent Sim-Ready object assets:
 `BaggedFood020`, `BottledDrink034`, `Pot079`, `Toaster099`, and `Cart018`.
 
 The repository contains the runnable composition and viewer code, README files,
-verification code, and Room_Mesh evidence screenshots. The large source data
+and verification code. The large source data
 is intentionally kept outside GitHub and is supplied through
 `ISAACSIM_ASSET_ROOT`.
 
@@ -21,9 +21,9 @@ source stage so the final combined stage opens with zero composition errors.
 
 ## Repository visibility
 
-The supplied `Room_Mesh.zip` contains no license or source notice. This
-repository and its data-bearing Release are therefore private. Do not make the
-Release public until redistribution permission for Room_Mesh is documented.
+The code repository is public, but the supplied `Room_Mesh.zip` contains no
+license or source notice. The source data is not included in the normal checkout;
+do not redistribute it until its permission and provenance are documented.
 The five independent object assets are CC BY-NC 4.0 and are restricted to
 non-commercial use.
 
@@ -33,47 +33,52 @@ machine it is located at:
 ```text
 /home/unitree/isaacsim/assets/Room_Mesh
 /home/unitree/isaacsim/assets/Room_3DGS
-/home/unitree/isaacsim/assets
 ```
 
-`Room_Mesh` can also be downloaded from the private v1.0.0 Release using
-`scripts/download_assets.sh`. `Room_3DGS` is not included in that Release and
-must be supplied separately through `ISAACSIM_ASSET_ROOT`.
+The parent directory `/home/unitree/isaacsim/assets` must also contain the five
+referenced object USD assets. They are not committed to this repository.
 
 ## Requirements
 
 - Ubuntu 22.04 x86_64
 - Vulkan-capable NVIDIA GPU with at least 16 GiB VRAM recommended
+- Git
 - Python 3.12 with `venv`
-- GitHub CLI, unzip, and zstd (`sudo apt install gh unzip zstd`)
+- NVIDIA Isaac Sim 6.0.0.1, installed locally or through the included installer
 - At least 40 GiB free disk space
 
-## Reproduce
+## Installation and run
 
-Authenticate with a GitHub account that can access this private repository:
+### 1. Clone the public code repository
 
 ```bash
-gh auth login
-gh repo clone vigorlee/Room
+git clone https://github.com/vigorlee/Room.git
 cd Room
-./scripts/download_assets.sh
-./scripts/install_isaacsim.sh
-export OMNI_KIT_ACCEPT_EULA=YES  # only after reviewing NVIDIA's EULA
-./start_room_mesh.sh
 ```
 
-To use an existing Isaac Sim 6.0.0.1 installation:
+### 2. Confirm the local scene data
+
+The verified data is already on the machine at these exact paths:
+
+```text
+/home/unitree/isaacsim/assets/Room_Mesh
+/home/unitree/isaacsim/assets/Room_3DGS
+```
+
+Check both source stages before running:
 
 ```bash
-export OMNI_KIT_ACCEPT_EULA=YES
-ISAACSIM_PYTHON=/path/to/isaacsim/python ./start_room_mesh.sh
+test -f /home/unitree/isaacsim/assets/Room_Mesh/Scene.usd
+test -f /home/unitree/isaacsim/assets/Room_3DGS/Scene.usd
 ```
 
-## Use the existing local data directory
+The parent directory must also contain the five referenced object USD assets.
+The source data is external to this repository and is not downloaded by
+`git clone`.
 
-The current machine already has both scene data sets under
-`/home/unitree/isaacsim/assets`. Set the data and Isaac Sim Python paths before
-running either scene:
+### 3. Install or locate Isaac Sim and configure the data root
+
+If Isaac Sim is already installed on this machine, use:
 
 ```bash
 export ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets
@@ -81,59 +86,55 @@ export ISAACSIM_PYTHON=/home/unitree/isaacsim/env/bin/python
 export OMNI_KIT_ACCEPT_EULA=YES  # after reviewing NVIDIA's EULA
 ```
 
-The launchers generate the combined USDA layer in the external data directory
-when it does not already exist, so the original source scenes remain unchanged.
-
-### Room_Mesh
+If Isaac Sim is not installed, the repository includes an installer that creates
+`.venv` and installs Isaac Sim 6.0.0.1 from NVIDIA's package index:
 
 ```bash
-./start_room_mesh.sh
-./start_room_mesh.sh --camera detail
-./start_room_mesh.sh --headless --camera overview \
-  --screenshot room-mesh-overview.png --exit-after 1
+./scripts/install_isaacsim.sh
+export ISAACSIM_PYTHON="$PWD/.venv/bin/python"
+export ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets
+export OMNI_KIT_ACCEPT_EULA=YES  # after reviewing NVIDIA's EULA
 ```
 
-### Room_3DGS
+On another machine, replace `ISAACSIM_PYTHON` with that machine's Isaac Sim
+Python executable. Keep `ISAACSIM_ASSET_ROOT` pointed at the parent directory
+that contains both `Room_Mesh/` and `Room_3DGS/`.
+
+Optional environment checks:
 
 ```bash
-./start_room_3dgs.sh
-./start_room_3dgs.sh --camera detail
-./start_room_3dgs.sh --headless --camera overview \
-  --screenshot room-3dgs-overview.png --settle-seconds 30
+test -x "$ISAACSIM_PYTHON"
+"$ISAACSIM_PYTHON" -c 'import isaacsim; print("Isaac Sim Python: OK")'
 ```
 
-If `ISAACSIM_ASSET_ROOT` is not set, both launchers use the repository-local
-`assets/` directory. This is useful after downloading the Room_Mesh release,
-but the Room_3DGS files still need to be supplied separately.
-
-## Validate and capture
-
-```bash
-python3 scripts/verify_package.py
-
-export OMNI_KIT_ACCEPT_EULA=YES
-./start_room_mesh.sh --headless --camera overview \
-  --screenshot room-overview.png --exit-after 1
-./start_room_mesh.sh --headless --camera detail \
-  --screenshot room-detail.png --exit-after 1
-```
-
-The existing Room_Mesh package validation passed: all source ZIP CRC checks, zero USD composition errors
-in both source and combined stages, all five new asset references resolved, and
-two non-black 1280 x 720 RTX renders with working materials and lighting. All
-five assets retain valid rigid bodies and colliders; Cart018's eight joints and
-Toaster099's four joints have no broken body targets.
-
-To check the two final combined stages and their five imported asset nodes using
-the external data directory:
+### 4. Verify both scenes
 
 ```bash
 ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets \
   "$ISAACSIM_PYTHON" scripts/verify_scenes.py
 ```
 
-The expected result is `SCENE_VERIFY PASS` for both `Room_Mesh` and
-`Room_3DGS`, with `composition_errors=0`.
+Expected output contains two `SCENE_VERIFY PASS` lines and
+`composition_errors=0` for both scenes.
+
+### 5. Start a scene
+
+Start the mesh scene:
+
+```bash
+./start_room_mesh.sh
+```
+
+Start the NuRec scene:
+
+```bash
+./start_room_3dgs.sh
+```
+
+Use `--camera detail` for the detail view. The launchers generate the combined
+USDA layer under the selected external data directory and preserve the source
+scenes. Do not run both Isaac Sim instances at the same time unless sufficient
+GPU memory is available.
 
 ## Runtime files
 
@@ -141,11 +142,12 @@ The expected result is `SCENE_VERIFY PASS` for both `Room_Mesh` and
 |---|---|
 | `start_room_mesh.sh` | Launch `Room_Mesh`; supports external data root |
 | `scripts/prepare_scene.py` | Build the non-destructive Room_Mesh composition |
-| `scripts/open_scene.py` | Open, validate, and capture Room_Mesh |
+| `scripts/open_scene.py` | Open and validate Room_Mesh |
 | `start_room_3dgs.sh` | Launch `Room_3DGS`; supports external data root |
 | `scripts/prepare_room_3dgs.py` | Build the non-destructive NuRec composition |
-| `scripts/open_room_3dgs.py` | Open, validate NuRec, and capture Room_3DGS |
+| `scripts/open_room_3dgs.py` | Open and validate Room_3DGS |
 | `scripts/verify_scenes.py` | Structural check for both final stages |
+| `scripts/install_isaacsim.sh` | Create a virtual environment and install Isaac Sim 6.0.0.1 |
 
 ## Current validation summary
 
@@ -154,7 +156,6 @@ The expected result is `SCENE_VERIFY PASS` for both `Room_Mesh` and
 | Final combined stage | Generated USDA layer | Generated USDA layer |
 | Imported assets | 5/5 | 5/5 |
 | Final composition errors | 0 | 0 |
-| Render output | 1280×720 overview/detail | 1280×720 overview/detail |
 | Imported asset transforms | Translate/rotate/scale | Translate/rotate |
 | Room furniture independently draggable | Yes, USD hierarchy | No, baked into NuRec visual |
 | Best use | Physics and interaction | Realistic display and vision |
@@ -164,22 +165,21 @@ payload named `MilkDrink014_clean_particle_asset` that is not present. The
 Room_3DGS composition layer disables this payload; the final combined stage is
 the supported entry point and has zero composition errors.
 
-## Release data
+## External data layout
 
-The original Room_Mesh ZIP is 2,454,033,960 bytes and extracts to about 4.4 GiB.
-It is split into 1,572,864,000-byte and 881,169,960-byte Release assets to stay
-below GitHub's 2 GiB per-file limit. The downloader reassembles and verifies the
-original archive SHA-256:
+The GitHub repository contains code only. Before starting either scene, provide
+the external data under this layout:
 
 ```text
-0be5acc7fe75d1982decd9c4f934c79e32b8c183cfc3928bd1d5b82819e1babc
+/home/unitree/isaacsim/assets/
+├── Room_Mesh/
+│   └── Scene.usd
+├── Room_3DGS/
+│   └── Scene.usd
+└── <five referenced object USD assets>
 ```
 
-The generated main stage is written under the selected data directory:
-
-```text
-assets/Room_Mesh/<generated-combined-stage>.usda
-```
-
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance and license
-boundaries.
+The launchers write their generated combined USDA layers inside the respective
+external data directories. Keep the source data outside this public code
+repository. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance
+and license boundaries.

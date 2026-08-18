@@ -1,8 +1,8 @@
 # Isaac Sim Room 两套场景运行说明
 
 这是一个面向 NVIDIA Isaac Sim 6.0.0.1 的运行代码仓库，包含
-`Room_Mesh` 和 `Room_3DGS` 两套房间场景的组合、加载、截图和验证脚本。
-README、运行代码和 Room_Mesh 验证截图上传到 GitHub；数 GB 的原始数据不
+`Room_Mesh` 和 `Room_3DGS` 两套房间场景的组合、加载和验证脚本。
+README 和运行代码上传到 GitHub；数 GB 的原始数据不
 上传，通过 `ISAACSIM_ASSET_ROOT` 从本地目录加载。
 
 五个独立物体资产为：
@@ -21,9 +21,9 @@ README、运行代码和 Room_Mesh 验证截图上传到 GitHub；数 GB 的原�
 
 ## 仓库可见性
 
-`Room_Mesh.zip` 内没有许可证或来源说明，因此本仓库和包含原场景数据的
-Release 保持为 private。确认 Room_Mesh 的公开再分发授权前，不应把 Release
-改为 public。五个独立物体资产使用 CC BY-NC 4.0，仅限非商业用途。
+代码仓库为 public，但 `Room_Mesh.zip` 内没有许可证或来源说明。原始场景
+数据不在普通代码 checkout 中；在确认授权和来源前，不要再分发原始数据。
+五个独立物体资产使用 CC BY-NC 4.0，仅限非商业用途。
 
 ## 数据在哪里
 
@@ -32,7 +32,6 @@ Release 保持为 private。确认 Room_Mesh 的公开再分发授权前，不�
 ```text
 /home/unitree/isaacsim/assets/Room_Mesh
 /home/unitree/isaacsim/assets/Room_3DGS
-/home/unitree/isaacsim/assets
 ```
 
 规模和许可边界：
@@ -58,104 +57,96 @@ export OMNI_KIT_ACCEPT_EULA=YES  # 阅读 NVIDIA EULA 后设置
 
 - Ubuntu 22.04 x86_64
 - 支持 Vulkan 的 NVIDIA GPU，建议至少 16 GiB 显存
+- Git
 - Python 3.12 与 `venv`
-- GitHub CLI、unzip 和 zstd：`sudo apt install gh unzip zstd`
+- NVIDIA Isaac Sim 6.0.0.1（已有安装，或使用仓库内安装脚本）
 - 至少 40 GiB 可用空间
 
-## 一键复现
+## 安装和运行
 
-先用有权访问本私有仓库的 GitHub 账号登录：
+### 1. 克隆代码仓库
 
 ```bash
-gh auth login
-gh repo clone vigorlee/Room
+git clone https://github.com/vigorlee/Room.git
 cd Room
-./scripts/download_assets.sh
+```
+
+### 2. 确认本地数据
+
+当前已验证的数据位于以下两个路径：
+
+```text
+/home/unitree/isaacsim/assets/Room_Mesh
+/home/unitree/isaacsim/assets/Room_3DGS
+```
+
+运行前检查两个源场景文件：
+
+```bash
+test -f /home/unitree/isaacsim/assets/Room_Mesh/Scene.usd
+test -f /home/unitree/isaacsim/assets/Room_3DGS/Scene.usd
+```
+
+两个目录的父目录还必须包含场景引用的 5 个独立物体 USD 资产。原始数据
+不随 `git clone` 下载。
+
+### 3. 安装或定位 Isaac Sim，并配置数据根目录
+
+如果当前机器已经安装 Isaac Sim，使用：
+
+```bash
+export ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets
+export ISAACSIM_PYTHON=/home/unitree/isaacsim/env/bin/python
+export OMNI_KIT_ACCEPT_EULA=YES  # 阅读 NVIDIA EULA 后设置
+```
+
+如果尚未安装 Isaac Sim，仓库内提供安装脚本，会创建 `.venv` 并从 NVIDIA
+软件源安装 Isaac Sim 6.0.0.1：
+
+```bash
 ./scripts/install_isaacsim.sh
-export OMNI_KIT_ACCEPT_EULA=YES  # 阅读并接受 NVIDIA EULA 后设置
-./start_room_mesh.sh
+export ISAACSIM_PYTHON="$PWD/.venv/bin/python"
+export ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets
+export OMNI_KIT_ACCEPT_EULA=YES  # 阅读 NVIDIA EULA 后设置
 ```
 
-已经安装 Isaac Sim 6.0.0.1 时可跳过安装：
+其他机器只需替换 `ISAACSIM_PYTHON`，并将 `ISAACSIM_ASSET_ROOT` 指向同时
+包含 `Room_Mesh/` 和 `Room_3DGS/` 的父目录。
+
+可选环境检查：
 
 ```bash
-export OMNI_KIT_ACCEPT_EULA=YES
-ISAACSIM_PYTHON=/你的/isaacsim/python ./start_room_mesh.sh
+test -x "$ISAACSIM_PYTHON"
+"$ISAACSIM_PYTHON" -c 'import isaacsim; print("Isaac Sim Python: OK")'
 ```
 
-## 运行两套场景
-
-### Room_Mesh
-
-```bash
-./start_room_mesh.sh
-./start_room_mesh.sh --camera detail
-./start_room_mesh.sh --headless --camera overview \
-  --screenshot room-mesh-overview.png --exit-after 1
-```
-
-组合场景：
-
-```text
-/home/unitree/isaacsim/assets/Room_Mesh/<generated-combined-stage>.usda
-```
-
-### Room_3DGS
-
-```bash
-./start_room_3dgs.sh
-./start_room_3dgs.sh --camera detail
-./start_room_3dgs.sh --headless --camera overview \
-  --screenshot room-3dgs-overview.png --settle-seconds 30
-```
-
-组合场景：
-
-```text
-/home/unitree/isaacsim/assets/Room_3DGS/<generated-combined-stage>.usda
-```
-
-3DGS 视觉数据为：
-
-```text
-/home/unitree/isaacsim/assets/Room_3DGS/lcc-usdz-result/Room001_Fix.usdz
-```
-
-其中包含 `111.nurec`；碰撞代理为：
-
-```text
-/home/unitree/isaacsim/assets/Room_3DGS/mesh-files/Room001.usd
-```
-
-5 个新增 USD 物品可以独立选择、平移和旋转。原有沙发、电视、茶几等已经
-烘焙进高斯视觉数据，不能像普通 USD 家具一样单独拖动。首次加载 Room_3DGS
-需要等待 NuRec 初始化，不建议同时长期运行两个 Isaac Sim 实例。
-
-## 截图和验证
-
-```bash
-python3 scripts/verify_package.py
-
-export OMNI_KIT_ACCEPT_EULA=YES
-./start_room_mesh.sh --headless --camera overview \
-  --screenshot room-overview.png --exit-after 1
-./start_room_mesh.sh --headless --camera detail \
-  --screenshot room-detail.png --exit-after 1
-```
-
-本机验证结果：Room_Mesh 原包 CRC 全部通过；源 Stage 和组合 Stage 的 USD
-composition errors 均为 0；组合 Stage 包含 3615 个源场景 Prim 和 5 件新资产；
-RTX 两张截图均为 1280 x 720、非黑帧，材质和灯光正常。五件资产的刚体与
-碰撞体均可解析，Cart018 的 8 个关节和 Toaster099 的 4 个关节没有失效引用。
-
-两套最终组合 Stage 的验证命令：
+### 4. 验证两套场景
 
 ```bash
 ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets \
   "$ISAACSIM_PYTHON" scripts/verify_scenes.py
 ```
 
-预期输出为两个 `SCENE_VERIFY PASS`，且 `composition_errors=0`。
+预期输出两个 `SCENE_VERIFY PASS`，并且两套场景的
+`composition_errors=0`。
+
+### 5. 启动场景
+
+启动网格房间：
+
+```bash
+./start_room_mesh.sh
+```
+
+启动 NuRec 房间：
+
+```bash
+./start_room_3dgs.sh
+```
+
+需要特写视角时，在命令后加 `--camera detail`。启动脚本会在外部数据目录
+下生成组合 USDA 层，不修改原始场景。首次启动 NuRec 场景需要等待初始化，
+不建议同时运行两个 Isaac Sim 实例。
 
 当前结论：
 
@@ -163,7 +154,6 @@ ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets \
 |---|---|---|
 | 最终组合错误 | 0 | 0 |
 | 独立物体资产加载 | 5/5 | 5/5 |
-| 渲染结果 | 1280×720 概览/特写 | 1280×720 概览/特写 |
 | 新增物品变换 | 平移/旋转/缩放 | 平移/旋转 |
 | 原始房间家具是否可拆分 | 支持 USD 层级编辑 | 不支持，已烘焙进 NuRec |
 | 推荐用途 | 物理、导航、碰撞、抓取 | 真实感展示、视觉感知 |
@@ -178,27 +168,27 @@ ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets \
 |---|---|
 | `start_room_mesh.sh` | 启动 Room_Mesh，支持外部数据目录 |
 | `scripts/prepare_scene.py` | 生成 Room_Mesh 组合层 |
-| `scripts/open_scene.py` | 加载、验证和截图 Room_Mesh |
+| `scripts/open_scene.py` | 加载和验证 Room_Mesh |
 | `start_room_3dgs.sh` | 启动 Room_3DGS，支持外部数据目录 |
 | `scripts/prepare_room_3dgs.py` | 生成 3DGS/NuRec 组合层 |
-| `scripts/open_room_3dgs.py` | 加载、验证 NuRec 和截图 Room_3DGS |
+| `scripts/open_room_3dgs.py` | 加载和验证 Room_3DGS |
 | `scripts/verify_scenes.py` | 验证两套最终 Stage |
-| `scripts/download_assets.sh` | 下载私有 Room_Mesh Release 资产 |
+| `scripts/install_isaacsim.sh` | 创建虚拟环境并安装 Isaac Sim 6.0.0.1 |
 
-## 数据大小与校验
+## 外部数据目录结构
 
-原始 Room_Mesh 压缩包为 2,454,033,960 字节，解压后约 4.4 GiB。由于超过
-GitHub 单个 Release 附件 2 GiB 的上限，v1.0.0 分为 1,572,864,000 字节和
-881,169,960 字节两个分卷；下载脚本会自动合并并核对原始 ZIP SHA-256：
+GitHub 仓库只包含运行代码，不包含大型原始数据。运行前需要准备以下目录：
 
 ```text
-0be5acc7fe75d1982decd9c4f934c79e32b8c183cfc3928bd1d5b82819e1babc
+/home/unitree/isaacsim/assets/
+├── Room_Mesh/
+│   └── Scene.usd
+├── Room_3DGS/
+│   └── Scene.usd
+└── <5 个被引用的独立物体 USD 资产>
 ```
 
-主入口：
-
-```text
-assets/Room_Mesh/<generated-combined-stage>.usda
-```
+启动脚本会在对应外部数据目录中生成最终组合 USDA 层，原始场景保持不变。
+不要把未获授权的原始数据提交到这个 public 代码仓库。
 
 详细来源与授权边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
