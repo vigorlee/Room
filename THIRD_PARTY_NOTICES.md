@@ -18,6 +18,13 @@ Original archive SHA-256:
 0be5acc7fe75d1982decd9c4f934c79e32b8c183cfc3928bd1d5b82819e1babc  Room_Mesh.zip
 ```
 
+## Room_3DGS
+
+The `Room_3DGS` scene and its NuRec/USDZ data were supplied locally by the
+project owner. They are not committed to this repository and are not included
+in the Release. No redistribution license or upstream notice has been added;
+do not publish or redistribute this data without confirming permission.
+
 ## Lightwheel sample assets
 
 The five sample assets are derived from LightwheelAI's public Sim-Ready Asset

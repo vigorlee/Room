@@ -10,9 +10,9 @@ if [[ ! -x "$PYTHON" ]]; then
     printf 'Run scripts/install_isaacsim.sh or set ISAACSIM_PYTHON.\n' >&2
     exit 1
 fi
-if [[ ! -f "$ASSET_ROOT/Room_Mesh/Scene.usd" ]]; then
-    printf 'Room_Mesh assets are missing: %s\n' "$ASSET_ROOT/Room_Mesh/Scene.usd" >&2
-    printf 'Run scripts/download_assets.sh or set ISAACSIM_ASSET_ROOT.\n' >&2
+if [[ ! -f "$ASSET_ROOT/Room_3DGS/Scene.usd" ]]; then
+    printf 'Room_3DGS assets are missing: %s\n' "$ASSET_ROOT/Room_3DGS/Scene.usd" >&2
+    printf 'Provide the data directory through ISAACSIM_ASSET_ROOT.\n' >&2
     exit 1
 fi
 if [[ -z "${OMNI_KIT_ACCEPT_EULA:-}" ]]; then
@@ -22,8 +22,8 @@ fi
 
 export DISPLAY="${DISPLAY:-:0}"
 export ISAACSIM_ASSET_ROOT="$ASSET_ROOT"
-if [[ ! -f "$ASSET_ROOT/Room_Mesh/Room_With_Lightwheel.usda" ]]; then
-    "$PYTHON" "$ROOT/scripts/prepare_scene.py"
+if [[ ! -f "$ASSET_ROOT/Room_3DGS/Room_3DGS_With_Lightwheel.usda" ]]; then
+    "$PYTHON" "$ROOT/scripts/prepare_room_3dgs.py"
 fi
 
-exec "$PYTHON" "$ROOT/scripts/open_scene.py" "$@"
+exec "$PYTHON" "$ROOT/scripts/open_room_3dgs.py" "$@"

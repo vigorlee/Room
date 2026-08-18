@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
+import os
 from pathlib import Path
 
 from pxr import Gf, Usd, UsdGeom, UsdPhysics
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ROOM_ROOT = ROOT / "assets/Room_Mesh"
+ASSET_ROOT = Path(
+    os.environ.get("ISAACSIM_ASSET_ROOT", str(ROOT / "assets"))
+).expanduser().resolve()
+ROOM_ROOT = ASSET_ROOT / "Room_Mesh"
 SOURCE_STAGE = ROOM_ROOT / "Scene.usd"
 COMBINED_STAGE = ROOM_ROOT / "Room_With_Lightwheel.usda"
-LIGHTWHEEL_ROOT = ROOT / "assets/Lightwheel_Samples"
+LIGHTWHEEL_ROOT = ASSET_ROOT / "Lightwheel_Samples"
 
 PLACEMENTS = {
     "BaggedFood020": (Gf.Vec3d(-1.00, -2.40, 0.790), 12.0, 1.0),
