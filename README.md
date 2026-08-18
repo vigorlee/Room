@@ -1,17 +1,13 @@
-# Isaac Sim Room Scenes with Five Lightwheel Assets
+# Isaac Sim Room Scenes
 
 This repository provides a non-destructive NVIDIA Isaac Sim 6.0.0.1
-runtime for two room scenes and five Lightwheel Sim-Ready assets:
+runtime for two room scenes and five independent Sim-Ready object assets:
 `BaggedFood020`, `BottledDrink034`, `Pot079`, `Toaster099`, and `Cart018`.
 
 The repository contains the runnable composition and viewer code, README files,
 verification code, and Room_Mesh evidence screenshots. The large source data
 is intentionally kept outside GitHub and is supplied through
 `ISAACSIM_ASSET_ROOT`.
-
-![Overview](screenshots/room-with-lightwheel-overview.png)
-
-![Asset detail](screenshots/room-with-lightwheel-detail.png)
 
 For `Room_Mesh`, the four small assets are placed on the kitchen dining table
 and the cart is placed on the floor to its left. The composition layer only
@@ -28,7 +24,7 @@ source stage so the final combined stage opens with zero composition errors.
 The supplied `Room_Mesh.zip` contains no license or source notice. This
 repository and its data-bearing Release are therefore private. Do not make the
 Release public until redistribution permission for Room_Mesh is documented.
-The five Lightwheel assets are CC BY-NC 4.0 and are restricted to
+The five independent object assets are CC BY-NC 4.0 and are restricted to
 non-commercial use.
 
 The source data is not committed to this repository. On the current working
@@ -37,7 +33,7 @@ machine it is located at:
 ```text
 /home/unitree/isaacsim/assets/Room_Mesh
 /home/unitree/isaacsim/assets/Room_3DGS
-/home/unitree/isaacsim/assets/Lightwheel_Samples
+/home/unitree/isaacsim/assets
 ```
 
 `Room_Mesh` can also be downloaded from the private v1.0.0 Release using
@@ -58,8 +54,8 @@ Authenticate with a GitHub account that can access this private repository:
 
 ```bash
 gh auth login
-gh repo clone vigorlee/lightwheel-room-mesh-isaacsim-repro
-cd lightwheel-room-mesh-isaacsim-repro
+gh repo clone vigorlee/Room
+cd Room
 ./scripts/download_assets.sh
 ./scripts/install_isaacsim.sh
 export OMNI_KIT_ACCEPT_EULA=YES  # only after reviewing NVIDIA's EULA
@@ -155,7 +151,7 @@ The expected result is `SCENE_VERIFY PASS` for both `Room_Mesh` and
 
 | Item | Room_Mesh | Room_3DGS |
 |---|---|---|
-| Final combined stage | `Room_With_Lightwheel.usda` | `Room_3DGS_With_Lightwheel.usda` |
+| Final combined stage | Generated USDA layer | Generated USDA layer |
 | Imported assets | 5/5 | 5/5 |
 | Final composition errors | 0 | 0 |
 | Render output | 1280×720 overview/detail | 1280×720 overview/detail |
@@ -179,10 +175,10 @@ original archive SHA-256:
 0be5acc7fe75d1982decd9c4f934c79e32b8c183cfc3928bd1d5b82819e1babc
 ```
 
-The generated main stage is:
+The generated main stage is written under the selected data directory:
 
 ```text
-assets/Room_Mesh/Room_With_Lightwheel.usda
+assets/Room_Mesh/<generated-combined-stage>.usda
 ```
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for provenance and license

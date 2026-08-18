@@ -1,21 +1,17 @@
-# Isaac Sim 两套房间场景与五件 Lightwheel 资产运行说明
+# Isaac Sim Room 两套场景运行说明
 
 这是一个面向 NVIDIA Isaac Sim 6.0.0.1 的运行代码仓库，包含
 `Room_Mesh` 和 `Room_3DGS` 两套房间场景的组合、加载、截图和验证脚本。
 README、运行代码和 Room_Mesh 验证截图上传到 GitHub；数 GB 的原始数据不
 上传，通过 `ISAACSIM_ASSET_ROOT` 从本地目录加载。
 
-五件 Lightwheel 资产为：
+五个独立物体资产为：
 
 - `BaggedFood020`
 - `BottledDrink034`
 - `Pot079`
 - `Toaster099`
 - `Cart018`
-
-![全景](screenshots/room-with-lightwheel-overview.png)
-
-![资产近景](screenshots/room-with-lightwheel-detail.png)
 
 `Room_Mesh` 中四件小物品放在厨房餐桌上，推车放在餐桌左侧地面。为了避免
 重叠，组合层只停用了原餐桌上的 `CoffeeMachine094`；源场景没有被修改。
@@ -27,7 +23,7 @@ README、运行代码和 Room_Mesh 验证截图上传到 GitHub；数 GB 的原�
 
 `Room_Mesh.zip` 内没有许可证或来源说明，因此本仓库和包含原场景数据的
 Release 保持为 private。确认 Room_Mesh 的公开再分发授权前，不应把 Release
-改为 public。Lightwheel 五件资产使用 CC BY-NC 4.0，仅限非商业用途。
+改为 public。五个独立物体资产使用 CC BY-NC 4.0，仅限非商业用途。
 
 ## 数据在哪里
 
@@ -36,7 +32,7 @@ Release 保持为 private。确认 Room_Mesh 的公开再分发授权前，不�
 ```text
 /home/unitree/isaacsim/assets/Room_Mesh
 /home/unitree/isaacsim/assets/Room_3DGS
-/home/unitree/isaacsim/assets/Lightwheel_Samples
+/home/unitree/isaacsim/assets
 ```
 
 规模和许可边界：
@@ -45,7 +41,7 @@ Release 保持为 private。确认 Room_Mesh 的公开再分发授权前，不�
 |---|---:|---|
 | `Room_Mesh` | 约 4.4 GiB，390 个文件 | 原始数据未公开授权，保持私有 |
 | `Room_3DGS` | 约 642 MiB，20 个文件 | 包含 `Room001_Fix.usdz` 和 `111.nurec` |
-| `Lightwheel_Samples` | 约 73 MiB，21 个文件 | CC BY-NC 4.0，仅限非商业使用 |
+| 独立物体资产 | 约 73 MiB，21 个文件 | CC BY-NC 4.0，仅限非商业使用 |
 
 仓库代码默认从仓库内的 `assets/` 读取。使用当前机器的数据时设置：
 
@@ -56,7 +52,7 @@ export OMNI_KIT_ACCEPT_EULA=YES  # 阅读 NVIDIA EULA 后设置
 ```
 
 如果在其他机器运行，只需把 `ISAACSIM_ASSET_ROOT` 指向包含
-`Room_Mesh/`、`Room_3DGS/` 和 `Lightwheel_Samples/` 的数据目录。
+`Room_Mesh/`、`Room_3DGS/` 和独立物体资产目录。
 
 ## 环境要求
 
@@ -72,8 +68,8 @@ export OMNI_KIT_ACCEPT_EULA=YES  # 阅读 NVIDIA EULA 后设置
 
 ```bash
 gh auth login
-gh repo clone vigorlee/lightwheel-room-mesh-isaacsim-repro
-cd lightwheel-room-mesh-isaacsim-repro
+gh repo clone vigorlee/Room
+cd Room
 ./scripts/download_assets.sh
 ./scripts/install_isaacsim.sh
 export OMNI_KIT_ACCEPT_EULA=YES  # 阅读并接受 NVIDIA EULA 后设置
@@ -101,7 +97,7 @@ ISAACSIM_PYTHON=/你的/isaacsim/python ./start_room_mesh.sh
 组合场景：
 
 ```text
-/home/unitree/isaacsim/assets/Room_Mesh/Room_With_Lightwheel.usda
+/home/unitree/isaacsim/assets/Room_Mesh/<generated-combined-stage>.usda
 ```
 
 ### Room_3DGS
@@ -116,7 +112,7 @@ ISAACSIM_PYTHON=/你的/isaacsim/python ./start_room_mesh.sh
 组合场景：
 
 ```text
-/home/unitree/isaacsim/assets/Room_3DGS/Room_3DGS_With_Lightwheel.usda
+/home/unitree/isaacsim/assets/Room_3DGS/<generated-combined-stage>.usda
 ```
 
 3DGS 视觉数据为：
@@ -166,7 +162,7 @@ ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets \
 | 项目 | Room_Mesh | Room_3DGS |
 |---|---|---|
 | 最终组合错误 | 0 | 0 |
-| Lightwheel 加载 | 5/5 | 5/5 |
+| 独立物体资产加载 | 5/5 | 5/5 |
 | 渲染结果 | 1280×720 概览/特写 | 1280×720 概览/特写 |
 | 新增物品变换 | 平移/旋转/缩放 | 平移/旋转 |
 | 原始房间家具是否可拆分 | 支持 USD 层级编辑 | 不支持，已烘焙进 NuRec |
@@ -174,7 +170,7 @@ ISAACSIM_ASSET_ROOT=/home/unitree/isaacsim/assets \
 
 注意：`Room_3DGS/Scene.usd` 单独打开时会引用本地不存在的可选 payload
 `MilkDrink014_clean_particle_asset`。组合脚本会禁用该 payload；实际运行应
-使用最终组合场景 `Room_3DGS_With_Lightwheel.usda`。
+使用生成的最终组合 USDA 场景。
 
 ## 运行代码清单
 
@@ -202,7 +198,7 @@ GitHub 单个 Release 附件 2 GiB 的上限，v1.0.0 分为 1,572,864,000 字�
 主入口：
 
 ```text
-assets/Room_Mesh/Room_With_Lightwheel.usda
+assets/Room_Mesh/<generated-combined-stage>.usda
 ```
 
 详细来源与授权边界见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
